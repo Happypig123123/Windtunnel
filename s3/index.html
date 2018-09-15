@@ -1,0 +1,62 @@
+<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta http-equiv="refresh" content="10">
+<style>
+body {
+font-family: 'Do Hyeon', sans-serif;
+font-size: 200%;
+}
+h1 {
+font-family: 'Do Hyeon', sans-serif;
+font-size: 350%;
+color: #7393c6;
+}
+</style>
+
+<script type="text/JavaScript">
+var timeoutPeriod = 1000;
+var imageURI = 'plot1.png';
+var x=0, y=0;
+var img = new Image();
+img.onload = function() {
+    var canvas = document.getElementById("x");
+    var context = canvas.getContext("2d");
+
+    context.drawImage(img, x, y);
+    if (x == 0) {
+      x = 0;
+    }
+    else {
+      x = 0;
+    }
+
+    setTimeout(timedRefresh,timeoutPeriod);
+};
+
+function timedRefresh() {
+    // just change src attribute, will always trigger the onload callback
+    img.src = imageURI + '?d=' + Date.now();
+}
+</script>
+
+<h1> WIND TUNNEL DATA PLOTER </h1>
+Hi, welcome to the Wind Tunnel Data Ploter. Please upload your excel <i> (Must be called File.xlsx)</i> file to the server, with <a href="upload.html">this link.</a><br>
+After around 30 seconds after you upload your excel document, the graph below will show your data.<br>
+<a href="plot1.png">
+<body onload="JavaScript:timedRefresh(10);">
+
+<canvas id="x" width="800" height="600" />
+</a>
+<br>click the graph to download.
+<br>
+<h1> How to create Excel Data Sheet </h1>
+Step 1:<br>
+Open File.xlsx (on Dekstop)<br>
+Step 2:<br>
+paste in Control Values (windtunnel with no car) into the green box on the template sheet. (click in top cornor cell)<br>
+Step 3:<br>
+paste in Car Values (windtunnel with car) into the Blue box on the template sheet. (click in top cornor cell of blue box)<br>
+Step 4:<br>
+Upload to server

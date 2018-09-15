@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AWS S3 File Upload</title>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
+</head>
+
+<body>
+    <input type="file" id="file-chooser" />
+    <button id="upload-button">Upload to S3</button>
+    <div id="results"></div>
+    <script type="text/javascript">
+    AWS.config.region = 'us-east-1'; // 1. Enter your region
+
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'us-east-1:cbaf2552-b07b-4978-845f-733bec1d85df' // 2. Enter your identity pool
+    });
+
+    AWS.config.credentials.get(function(err) {
+        if (err) alert("Error: " + err);
+        console.log(AWS.config.credentials);
+        listObjs();
+    });
+
+    var bucketName = 'windtunnelgraph'; // Enter your bucket name
+    var bucket = new AWS.S3({
+        params: {
+            Bucket: bucketName
+        }
+    });
+
+    var fileChooser = document.getElementById('file-chooser');
+    var button = document.getElementById('upload-button');
+    var results = document.getElementById('results');
+    button.addEventListener('click', function() {
+
+        var file = fileChooser.files[0];
+
+        if (file) {
+
+            results.innerHTML = '';
+            var objKey = file.name;
+            var params = {
+                Key: objKey,
+                ContentType: file.type,
+                Body: file,
+                ACL: 'public-read'
+            };
+
+            bucket.upload(params, function(err, data) {
+                if (err) {
+                    results.innerHTML = 'ERROR: ' + err;
+                } else {
+                    console.log(data);
+                    listObjs();
+                }
+            }).on('httpUploadProgress', function(evt) {
+                console.log('Progress:', evt.loaded /  evt.total * 100); 
+            });
+        } else {
+            results.innerHTML = 'Nothing to upload.';
+        }
+    }, false);
+    function listObjs() {
+        var prefix = '';
+        bucket.listObjects({
+            Prefix: prefix
+        }, function(err, data) {
+            if (err) {
+                results.innerHTML = 'ERROR: ' + err;
+            } else {
+                console.log(data);
+                var objKeys = "";
+                data.Contents.forEach(function(obj) {
+                    objKeys += obj.Key + "<br>";
+                });
+                results.innerHTML = objKeys;
+            }
+        });
+    }
+    </script>
+</body>
+
+</html>
